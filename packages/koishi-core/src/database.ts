@@ -139,8 +139,8 @@ type InjectionMap <S extends SubdatabaseType> = Partial<Record<TableType, Databa
 export type TableConfig <K extends SubdatabaseType> = K extends keyof InjectOptions ? InjectOptions[K] : never
 export type InjectConfig <K extends SubdatabaseType> = Partial<Record<TableType, TableConfig<K>>>
 
-interface Subdatabase <T extends SubdatabaseType = SubdatabaseType, A extends AbstractDatabase = AbstractDatabase> {
-  new (config: DatabaseConfig[T], injectConfig?: InjectConfig<T>): A
+interface Subdatabase <T extends SubdatabaseType> {
+  new (config: DatabaseConfig[T], injectConfig?: InjectConfig<T>): AbstractDatabase
   identify? (config: DatabaseConfig[T]): string | number
   _methods?: InjectionMap<T>
   _options?: InjectConfig<T>
@@ -157,7 +157,7 @@ const unknownOptions: { [K in SubdatabaseType]?: TableConfig<K> } = {}
 const subdatabases: { [K in SubdatabaseType]?: Subdatabase<K> } = {}
 const existingDatabases: { [K in SubdatabaseType]?: DatabaseMap } = {}
 
-export function registerDatabase <K extends SubdatabaseType> (name: K, subdatabase: Subdatabase<K, {}>) {
+export function registerDatabase <K extends SubdatabaseType> (name: K, subdatabase: Subdatabase<K>) {
   subdatabases[name] = subdatabase as any
   subdatabase._methods = unknownMethods[name] ?? {}
   subdatabase._options = unknownOptions[name] ?? {}
